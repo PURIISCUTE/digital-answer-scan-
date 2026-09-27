@@ -1,0 +1,8 @@
+{
+  "name": "ScanGrade AI — Optical Answer Sheet Scanner & Grading Engine",
+  "description": "High-precision digital optical answer sheet scanner and automated grading engine with semantic similarity scoring, zero-error tolerance human audit flags, and high-speed batch grading.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
