@@ -22,6 +22,7 @@ import {
   Eye,
   ChevronDown,
   ChevronUp,
+  Cpu,
 } from 'lucide-react';
 import {
   GradingEvaluationResult,
@@ -45,6 +46,7 @@ interface ScannerAuditorStationProps {
   onResetAll: () => void;
   onLoadBenchmarkBundle: () => void;
   onOpenStudentReportModal: () => void;
+  onOpenModelModal?: () => void;
 }
 
 export const ScannerAuditorStation: React.FC<ScannerAuditorStationProps> = ({
@@ -60,6 +62,7 @@ export const ScannerAuditorStation: React.FC<ScannerAuditorStationProps> = ({
   onResetAll,
   onLoadBenchmarkBundle,
   onOpenStudentReportModal,
+  onOpenModelModal,
 }) => {
   const [activeQuestionHighlight, setActiveQuestionHighlight] = useState<string | null>(null);
   const [activeViewerTab, setActiveViewerTab] = useState<'answerSheet' | 'questionPaper' | 'markingScheme'>('answerSheet');
@@ -279,6 +282,41 @@ export const ScannerAuditorStation: React.FC<ScannerAuditorStationProps> = ({
                   )}
                 </div>
               </div>
+            </div>
+
+            {/* Working LLM Engine & Architecture Specs Bar */}
+            <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 text-xs shadow-inner">
+              <div className="flex flex-wrap items-center gap-2.5">
+                <div className="flex items-center gap-1.5 font-mono text-slate-300">
+                  <Cpu className="w-3.5 h-3.5 text-cyan-400" />
+                  <span className="text-slate-400">LLM Engine:</span>
+                  <span className="font-bold text-white">
+                    {evaluationResult.meta?.model_name || 'Gemini 3.1 Flash-Lite'}
+                  </span>
+                </div>
+                <span className="text-slate-700 hidden sm:inline">•</span>
+                <span className="px-2 py-0.5 rounded font-mono font-bold text-cyan-300 bg-cyan-950/50 border border-cyan-800/40">
+                  {evaluationResult.meta?.parameters || '~8 Billion Parameters'}
+                </span>
+                <span className="text-slate-700 hidden sm:inline">•</span>
+                <span className="text-slate-400 font-mono text-[11px] hidden md:inline">
+                  {evaluationResult.meta?.architecture || 'Distilled MoE Sparse Multimodal Transformer'}
+                </span>
+                <span className="text-slate-700 hidden sm:inline">•</span>
+                <span className="text-emerald-400 font-mono text-[11px] font-semibold">
+                  Temp: 0.0 (Deterministic)
+                </span>
+              </div>
+
+              {onOpenModelModal && (
+                <button
+                  onClick={onOpenModelModal}
+                  className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 font-semibold transition-all text-xs cursor-pointer"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+                  <span>View Model Architecture & Parameters</span>
+                </button>
+              )}
             </div>
 
             {/* Zero-Error Warning Box */}

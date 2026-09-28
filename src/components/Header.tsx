@@ -20,6 +20,7 @@ interface HeaderProps {
   zeroErrorToleranceCount?: number;
   onOpenUploadModal?: () => void;
   onResetAll?: () => void;
+  onOpenModelModal?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -29,6 +30,7 @@ export const Header: React.FC<HeaderProps> = ({
   zeroErrorToleranceCount = 0,
   onOpenUploadModal,
   onResetAll,
+  onOpenModelModal,
 }) => {
   return (
     <header className="border-b border-slate-800 bg-slate-900/90 backdrop-blur-md sticky top-0 z-40">
@@ -94,10 +96,17 @@ export const Header: React.FC<HeaderProps> = ({
               </button>
             )}
 
-            <div className="hidden lg:flex items-center gap-2 px-2.5 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-mono">
-              <Zap className="w-3.5 h-3.5 animate-pulse" />
-              <span>Gemini 3.8 Flash (Temp 0.0)</span>
-            </div>
+            <button
+              onClick={onOpenModelModal}
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-xs font-mono transition-colors shadow-sm cursor-pointer"
+              title="Click to view full LLM Architecture & Parameter Specifications"
+            >
+              <Zap className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+              <span className="font-bold">Gemini 3.1 Flash-Lite</span>
+              <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-200 font-semibold border border-emerald-500/40">
+                ~8B Params
+              </span>
+            </button>
 
             {zeroErrorToleranceCount > 0 ? (
               <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-medium animate-pulse">

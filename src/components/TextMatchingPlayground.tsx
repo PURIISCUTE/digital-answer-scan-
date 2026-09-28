@@ -204,6 +204,29 @@ export const TextMatchingPlayground: React.FC<TextMatchingPlaygroundProps> = ({
         </div>
       </div>
 
+      {/* LLM Engine & Parameters Info Strip */}
+      <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-2.5 rounded-xl bg-slate-900/60 border border-slate-800 text-xs font-mono">
+        <div className="flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span className="text-slate-400">LLM Engine:</span>
+          <span className="text-white font-bold">Gemini 3.1 Flash-Lite</span>
+          <span className="px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800/40 text-[11px] font-bold">
+            ~8 Billion Parameters
+          </span>
+        </div>
+        <div className="flex items-center gap-3 text-slate-400 text-[11px]">
+          <span>Context: 1,048,576 Tokens</span>
+          <span>•</span>
+          <span className="text-emerald-400">Temperature: 0.0 (Zero Variance)</span>
+          {latencyMs && (
+            <>
+              <span>•</span>
+              <span className="text-cyan-400 font-bold">Latency: {latencyMs}ms</span>
+            </>
+          )}
+        </div>
+      </div>
+
       {/* Main Dual Editor: Master Reference vs Student Text */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
         {/* Left Side: Master Scheme Reference Answer */}

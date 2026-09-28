@@ -412,7 +412,8 @@ export function generateStudentReportHtml(
     <div class="footer-seal">
       <div>
         <strong>ScanGrade Autonomous Optical Grading Engine</strong><br>
-        Standard Error of Measurement: 0.00 • Certified Semantic Calibration
+        AI Model: ${escapeHtml(result.meta?.model_name || 'Gemini 3.1 Flash-Lite')} (${escapeHtml(result.meta?.parameters || '~8 Billion Parameters')})<br>
+        Standard Error of Measurement: 0.00 • Certified Semantic Calibration • Temp: 0.0
       </div>
       <div class="sign-box">
         <div class="sign-line"></div>

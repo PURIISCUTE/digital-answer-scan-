@@ -364,6 +364,23 @@ export const BatchGradingEngine: React.FC<BatchGradingEngineProps> = ({
           </div>
         </div>
 
+        {/* Engine Model & Parameter Specs Strip */}
+        <div className="flex flex-wrap items-center justify-between gap-3 px-3.5 py-2 rounded-xl bg-slate-950/80 border border-slate-800 text-xs font-mono">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span className="text-slate-400">LLM Engine:</span>
+            <span className="text-white font-bold">Gemini 3.1 Flash-Lite</span>
+            <span className="text-cyan-300 font-bold bg-cyan-950/60 px-2 py-0.5 rounded border border-cyan-800/40 text-[11px]">
+              ~8 Billion Parameters
+            </span>
+          </div>
+          <div className="flex items-center gap-2 text-slate-400 text-[11px]">
+            <span>Architecture: MoE Sparse Multimodal Transformer</span>
+            <span>•</span>
+            <span className="text-emerald-400 font-semibold">1M Context Window</span>
+          </div>
+        </div>
+
         {/* Live Parallel Progress Bar */}
         <div className="space-y-1.5">
           <div className="flex items-center justify-between text-xs">

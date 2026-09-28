@@ -14,6 +14,7 @@ import { BatchGradingEngine } from './components/BatchGradingEngine';
 import { GradebookAnalytics } from './components/GradebookAnalytics';
 import { RawJsonViewer } from './components/RawJsonViewer';
 import { StudentReportModal } from './components/StudentReportModal';
+import { ModelInfoModal } from './components/ModelInfoModal';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<'scanner' | 'batch' | 'analytics' | 'raw-json' | 'text-matching'>('scanner');
@@ -32,6 +33,7 @@ export default function App() {
   const [gradingError, setGradingError] = useState<string | null>(null);
   const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>([]);
   const [isStudentReportModalOpen, setIsStudentReportModalOpen] = useState<boolean>(false);
+  const [isModelInfoModalOpen, setIsModelInfoModalOpen] = useState<boolean>(false);
 
   // Scan & Grade the uploaded 3 documents via Gemini API
   const handleScanTrio = async (sensitivity: 'strict' | 'normal' | 'relaxed' = 'normal') => {
@@ -79,7 +81,10 @@ export default function App() {
       const data = await response.json();
 
       if (data.success && data.data) {
-        setEvaluationResult(data.data);
+        setEvaluationResult({
+          ...data.data,
+          meta: data.meta,
+        });
         setGradingLatencyMs(data.meta?.latency_ms || Date.now() - startTime);
       } else {
         setGradingError(data.error || 'Autonomous multi-document grading engine encountered an error.');
@@ -248,6 +253,7 @@ QUESTION 3 [7 MARKS]
         detectedSubject={detectedSubject}
         zeroErrorToleranceCount={zeroErrorToleranceCount}
         onResetAll={handleResetAll}
+        onOpenModelModal={() => setIsModelInfoModalOpen(true)}
       />
 
       {/* Main Workstation Container */}
@@ -266,6 +272,7 @@ QUESTION 3 [7 MARKS]
             onResetAll={handleResetAll}
             onLoadBenchmarkBundle={handleLoadBenchmarkBundle}
             onOpenStudentReportModal={() => setIsStudentReportModalOpen(true)}
+            onOpenModelModal={() => setIsModelInfoModalOpen(true)}
           />
         )}
 
@@ -303,6 +310,12 @@ QUESTION 3 [7 MARKS]
           examTitle={evaluationResult.paper_metadata.subject_exam || 'Official Examination Assessment'}
         />
       )}
+
+      {/* LLM Model Architecture & Parameters Modal */}
+      <ModelInfoModal
+        isOpen={isModelInfoModalOpen}
+        onClose={() => setIsModelInfoModalOpen(false)}
+      />
     </div>
   );
 }

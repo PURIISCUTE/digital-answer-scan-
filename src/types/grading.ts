@@ -46,10 +46,36 @@ export interface OverallScore {
   requires_manual_audit: boolean;
 }
 
+export interface EvaluationMeta {
+  latency_ms: number;
+  model_used: string;
+  model_name?: string;
+  parameters?: string;
+  parameters_numeric?: string;
+  architecture?: string;
+  context_window?: string;
+  fallback_triggered?: boolean;
+  temperature?: number;
+  processed_at?: string;
+}
+
+export interface ModelSpec {
+  id: string;
+  name: string;
+  parameters: string;
+  parameters_numeric: string;
+  architecture: string;
+  context_window: string;
+  status: string;
+  is_default: boolean;
+  description: string;
+}
+
 export interface GradingEvaluationResult {
   paper_metadata: PaperMetadata;
   overall_score: OverallScore;
   question_results: QuestionResult[];
+  meta?: EvaluationMeta;
 }
 
 export interface MarkingSchemeQuestion {
