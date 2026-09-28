@@ -145,7 +145,19 @@ export const TextMatchingPlayground: React.FC<TextMatchingPlaygroundProps> = ({
         }),
       });
 
-      const data = await response.json();
+      let data: any;
+      const contentType = response.headers.get('content-type') || '';
+      if (contentType.includes('application/json')) {
+        data = await response.json();
+      } else {
+        const errorText = await response.text();
+        throw new Error(
+          errorText.includes('A server error') || response.status === 500
+            ? 'Vercel Server Notice: Backend encountered an error. Ensure GEMINI_API_KEY is configured in your Vercel Project Settings > Environment Variables.'
+            : (errorText || `Server returned HTTP ${response.status}: ${response.statusText}`)
+        );
+      }
+
       if (data.success && data.data) {
         setMatchResult(data.data);
         setLatencyMs(data.meta?.latency_ms || Date.now() - start);

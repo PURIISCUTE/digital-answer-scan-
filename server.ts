@@ -1,5 +1,4 @@
 import express from 'express';
-import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI, Type } from '@google/genai';
 import dotenv from 'dotenv';
 import path from 'path';
@@ -59,6 +58,11 @@ async function generateWithResilience(params: {
   config?: any;
   preferredModel?: string;
 }) {
+  if (!process.env.GEMINI_API_KEY) {
+    throw new Error(
+      'GEMINI_API_KEY is missing on this deployment. If deploying to Vercel, please add GEMINI_API_KEY to your Vercel Project Settings > Environment Variables.'
+    );
+  }
   const primaryModel = params.preferredModel || 'gemini-3.1-flash-lite';
   const backupModel = primaryModel === 'gemini-3.1-flash-lite' ? 'gemini-3.8-flash' : 'gemini-3.1-flash-lite';
 
@@ -797,7 +801,8 @@ async function startServer() {
   const isProd = process.env.NODE_ENV === 'production';
 
   if (!isProd) {
-    const vite = await createViteServer({
+    const { createServer } = await import('vite');
+    const vite = await createServer({
       server: { middlewareMode: true },
       appType: 'spa',
     });
@@ -814,7 +819,9 @@ async function startServer() {
   });
 }
 
-if (!process.env.VERCEL) {
+const isMain = Boolean(process.argv[1] && (process.argv[1].endsWith('server.ts') || process.argv[1].endsWith('server.js')));
+
+if (isMain && !process.env.VERCEL) {
   startServer();
 }
 

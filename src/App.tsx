@@ -7,6 +7,7 @@ import {
   UploadedExamDocument,
 } from './types/grading';
 import { renderAnswerSheetToDataUrl } from './utils/sheetCanvasRenderer';
+import { optimizeImageDataUrl } from './utils/imageOptimizer';
 import { Header } from './components/Header';
 import { ScannerAuditorStation } from './components/ScannerAuditorStation';
 import { TextMatchingPlayground } from './components/TextMatchingPlayground';
@@ -51,25 +52,36 @@ export default function App() {
     const startTime = Date.now();
 
     try {
+      // Optimize image payloads in the browser to prevent Vercel 4.5MB serverless limits
+      const answerSheetImg = trioState.answerSheet.base64
+        ? await optimizeImageDataUrl(trioState.answerSheet.base64)
+        : undefined;
+      const questionPaperImg = trioState.questionPaper?.base64
+        ? await optimizeImageDataUrl(trioState.questionPaper.base64)
+        : undefined;
+      const markingSchemeImg = trioState.markingScheme?.base64
+        ? await optimizeImageDataUrl(trioState.markingScheme.base64)
+        : undefined;
+
       const response = await fetch('/api/scan-and-grade-trio', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           answerSheet: {
-            image: trioState.answerSheet.base64,
+            image: answerSheetImg,
             mimeType: trioState.answerSheet.mimeType,
             text: trioState.answerSheet.text,
           },
           questionPaper: trioState.questionPaper
             ? {
-                image: trioState.questionPaper.base64,
+                image: questionPaperImg,
                 mimeType: trioState.questionPaper.mimeType,
                 text: trioState.questionPaper.text,
               }
             : undefined,
           markingScheme: trioState.markingScheme
             ? {
-                image: trioState.markingScheme.base64,
+                image: markingSchemeImg,
                 mimeType: trioState.markingScheme.mimeType,
                 text: trioState.markingScheme.text,
               }
@@ -78,7 +90,18 @@ export default function App() {
         }),
       });
 
-      const data = await response.json();
+      let data: any;
+      const contentType = response.headers.get('content-type') || '';
+      if (contentType.includes('application/json')) {
+        data = await response.json();
+      } else {
+        const errorText = await response.text();
+        throw new Error(
+          errorText.includes('A server error') || response.status === 500
+            ? 'Vercel Server Notice: The server encountered an issue. If deploying on Vercel, ensure GEMINI_API_KEY is configured in your Vercel Project Settings > Environment Variables.'
+            : (errorText || `Server returned HTTP ${response.status}: ${response.statusText}`)
+        );
+      }
 
       if (data.success && data.data) {
         setEvaluationResult({

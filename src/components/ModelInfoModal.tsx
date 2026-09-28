@@ -38,12 +38,15 @@ export const ModelInfoModal: React.FC<ModelInfoModalProps> = ({
     const start = Date.now();
     try {
       const res = await fetch('/api/model-info');
-      const data = await res.json();
-      if (data.models) {
-        setModelSpecs(data.models);
-      }
-      if (data.current_specs) {
-        setCurrentSpecs(data.current_specs);
+      const contentType = res.headers.get('content-type') || '';
+      if (contentType.includes('application/json')) {
+        const data = await res.json();
+        if (data.models) {
+          setModelSpecs(data.models);
+        }
+        if (data.current_specs) {
+          setCurrentSpecs(data.current_specs);
+        }
       }
       setPingLatency(Date.now() - start);
     } catch (err) {
